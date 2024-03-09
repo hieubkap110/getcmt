@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Display and Edit JSON Array</title>
+    <title>Danh sách đánh giá</title>
     <!-- Bootstrap CSS -->
     <link
       rel="stylesheet"
@@ -56,35 +56,65 @@
       #commentListView li {
         list-style: none;
       }
+      .highlight {
+        background-color: yellow;
+        font-weight: bold;
+      }
     </style>
   </head>
 
   <body>
-    <div class="container">
-      <input
-        type="email"
-        id="input-data"
-        class="form-control"
-        placeholder="Nhập Danh Sách Comment"
-      />
-      <div class="d-flex align-items-center mt-3 justify-content-center">
-        <button onclick="addJsonData()" class="btn btn-success mx-2">
-          Thêm Danh Sách Comment
-        </button>
-        <button
-          id="shuffleButton"
-          onclick="shuffleArray()"
-          class="btn btn-primary"
-        >
-          Trộn
-        </button>
-        <button
-          id="toggleViewButton"
-          onclick="toggleView()"
-          class="btn btn-secondary mx-2"
-        >
-          Chuyển đổi Xem
-        </button>
+    <div class="container-fluid card p-3">
+      <div class="row">
+        <h2>Chức năng</h2>
+        <div class="col-md-12">
+          <button
+            id="shuffleButton"
+            onclick="shuffleArray()"
+            class="btn btn-primary"
+          >
+            Trộn
+          </button>
+          <button
+            id="toggleViewButton"
+            onclick="toggleView()"
+            class="btn btn-secondary mx-2"
+          >
+            Chuyển đổi Xem
+          </button>
+        </div>
+      </div>
+      <hr />
+      <div class="row my-3">
+        <div class="col-md-6">
+          <label for="" class="fw-bold">Thêm Danh Sách Comment</label>
+          <div class="d-flex align-items-center mt-3 justify-content-center">
+            <input
+              type="email"
+              id="input-data"
+              class="form-control"
+              placeholder="Nhập Danh Sách Comment"
+            />
+            <button onclick="addJsonData()" class="btn btn-success w-25 mx-2">
+              Thêm
+            </button>
+          </div>
+          
+        </div>
+        <div class="col-md-6">
+          <label for="" class="fw-bold">Tìm Kiếm</label>
+          <div class="d-flex align-items-center mt-3 justify-content-center">
+            <input
+            type="text"
+            id="searchInput"
+            class="form-control"
+            placeholder="Nhập từ khóa tìm kiếm"
+          />
+          <button onclick="searchComments()" class="btn btn-primary w-25 mx-2">
+            Tìm Kiếm
+          </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -98,8 +128,9 @@
       <table class="table table-striped table-bordered">
         <thead>
           <tr>
+            <th scope="col">STT</th>
             <th scope="col">Comment</th>
-            <th scope="col">Action</th>
+            <th scope="col"></th>
           </tr>
         </thead>
         <tbody id="commentsList"></tbody>
@@ -111,6 +142,7 @@
       <h5>Danh Sách Comment:</h5>
       <pre id="commentListView"></pre>
     </div>
+    
 
     <!-- Edit Modal -->
     <div
@@ -240,8 +272,15 @@
             if (viewMode === "table") {
               const commentContainer = document.createElement("tr");
 
+              // Thêm cột số thứ tự
+              const indexColumn = document.createElement("td");
+              indexColumn.textContent = index + 1;
+
               const commentColumn = document.createElement("td");
               commentColumn.textContent = commentObj.comment;
+              commentColumn.innerHTML = highlightSearchKeyword(
+                commentObj.comment
+              );
 
               const actionColumn = document.createElement("td");
               actionColumn.classList.add("d-flex", "align-items-center");
@@ -261,6 +300,8 @@
               actionColumn.appendChild(editButton);
               actionColumn.appendChild(deleteButton);
 
+              // Thêm cột số thứ tự vào dòng
+              commentContainer.appendChild(indexColumn);
               commentContainer.appendChild(commentColumn);
               commentContainer.appendChild(actionColumn);
 
@@ -317,6 +358,30 @@
       function toggleView() {
         viewMode = viewMode === "table" ? "list" : "table";
         displayComments(jsonArray);
+      }
+
+      let searchKeyword = "";
+
+      function searchComments() {
+        searchKeyword = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+        const filteredComments = jsonArray.filter((commentObj) =>
+          commentObj.comment.toLowerCase().includes(searchKeyword)
+        );
+        displayComments(filteredComments);
+      }
+
+      function highlightSearchKeyword(comment) {
+        if (searchKeyword !== "") {
+          const regex = new RegExp(searchKeyword, "gi");
+          return comment.replace(
+            regex,
+            (match) => `<span class="highlight">${match}</span>`
+          );
+        } else {
+          return comment;
+        }
       }
 
       // Initial display of comments
