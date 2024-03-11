@@ -1,0 +1,61 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+  }
+
+  pre {
+    white-space: pre-wrap;
+  }
+
+  .delete-button,
+  .edit-button {
+    margin-right: 10px;
+    cursor: pointer;
+  }
+
+  #shuffleButton {
+    cursor: pointer;
+  }
+
+  .comment-list {
+    display: none;
+  }
+
+  .table-container {
+    display: block;
+  }
+
+  .comment-list-container {
+    display: none;
+  }
+
+  #commentListView li {
+    list-style: none;
+  }
+
+  .highlight {
+    background-color: yellow;
+    font-weight: bold;
+  }
+
+
+  .rating-column {
+    display: flex;
+    align-items: center;
+  }
+
+  .rating-star {
+    color: #ffd700;
+    font-size: 20px;
+    margin-right: 5px;
+  }
+
+  .rating-star::before {
+    content: "\2605"; 
+  }
+
+  .empty-star {
+    color: #ccc;
+    font-size: 20px;
+    margin-right: 5px;
+  }
