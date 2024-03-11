@@ -29,24 +29,20 @@ const commentListView = document.getElementById("commentListView");
 const tableContainer = document.querySelector(".table-container");
 const commentListContainer = document.querySelector(".comment-list-container");
 
-function cleanComment(comment) {
-  let cleanedComment = comment
-    .replace(/Đúng với mô tả:[^\n]*\n/g, "")
-    .replace(/Chất lượng sản phẩm:[^\n]*\n\n/g, "")
-    .replace(/Công dụng:[^\n]*\n/g, "")
-    .replace(/Đối tượng sử dụng:[^\n]*\n/g, "")
-    .replace(/Mùi hương:[^\n]*\n/g, "")
-    .replace(/Phù hợp với loại da:[^\n]*\n/g, "")
-    .replace(/Chất liệu:[^\n]*\n/g, "")
-    .replace(/Độ bền:[^\n]*\n/g, "")
-    .replace(/Kiểu dáng:[^\n]*\n/g, "")
-    .replace(/Chất lượng sản phẩm:[^\n]*\n/g, "")
-    .replace(/Độ tuổi sử dụng:[^\n]*\n/g, "")
-    .replace(/Khả năng thấm hút:[^\n]*\n/g, "")
-    .replace(/Độ dày:[^\n]*\n/g, "")
-    .replace(/^\s*[\r\n]/gm, "");
-  return cleanedComment.trim();
+function cleanComment(comment, templateTags = []) {
+  let cleanedComment = comment;
+
+  // Loại bỏ từ khóa trong templateTags
+  templateTags.forEach(keyword => {
+    cleanedComment = cleanedComment.replace(new RegExp(`${keyword}:[^\n]*\n`, 'g'), '');
+  });
+
+  // Loại bỏ các dòng trắng và khoảng trắng ở đầu và cuối chuỗi
+  cleanedComment = cleanedComment.replace(/^\s*[\r\n]/gm, "").trim();
+
+  return cleanedComment;
 }
+
 
 function shuffleArray() {
   for (let i = jsonArray.length - 1; i > 0; i--) {
@@ -61,7 +57,7 @@ function displayComments(commentsArray) {
   commentListView.innerHTML = "";
 
   let uniqueComments = commentsArray.reduce((acc, current, index) => {
-    const cleanedComment = cleanComment(current.comment);
+    const cleanedComment = cleanComment(current.comment, current.template_tags);
     if (
       cleanedComment &&
       !acc.find((comment) => cleanComment(comment.comment) === cleanedComment)
@@ -91,11 +87,12 @@ function displayComments(commentsArray) {
           commentObj.submit_time * 1000
         ).format("DD/MM/YYYY, h:mm:ss");
         const ratingColumn = document.createElement("td");
-        ratingColumn.classList.add("d-flex");
         ratingColumn.innerHTML = generateStarIcons(commentObj.rating_star);
 
         const actionColumn = document.createElement("td");
-        actionColumn.classList.add("d-flex", "align-items-center");
+        const actionColumnDiv = document.createElement("div");
+        actionColumnDiv.classList.add("d-flex");
+        actionColumn.appendChild(actionColumnDiv);
 
         // Edit button
         const editButton = document.createElement("button");
@@ -109,8 +106,8 @@ function displayComments(commentsArray) {
         deleteButton.innerHTML = "Xoá";
         deleteButton.onclick = () => deleteComment(commentObj.cmtid);
 
-        actionColumn.appendChild(editButton);
-        actionColumn.appendChild(deleteButton);
+        actionColumnDiv.appendChild(editButton);
+        actionColumnDiv.appendChild(deleteButton);
 
         // Thêm cột vào dòng
         commentContainer.appendChild(indexColumn);
@@ -203,9 +200,9 @@ function highlightSearchKeyword(comment) {
 function generateStarIcons(rating) {
   const starIcons = Array.from({ length: 5 }, (_, index) => {
     if (index < rating) {
-      return '<div class="fas fa-star rating-star"></div>';
+      return '<i class="fas fa-star rating-star"></i>';
     } else {
-      return '<i class="fas fa-star empty-star"></i>';
+      return '<i class="far fa-star empty-star"></i>';
     }
   });
 
