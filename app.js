@@ -155,7 +155,7 @@ function openEditModal(cmtid) {
     editedIndex = jsonArray.indexOf(commentObj);
     const editedCommentText = commentObj.comment;
     document.getElementById("editedComment").value =
-      cleanComment(editedCommentText);
+      cleanComment(editedCommentText, commentObj.template_tags);
     new bootstrap.Modal(document.getElementById("editModal")).show();
   }
 }
