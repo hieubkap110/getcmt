@@ -120,8 +120,7 @@ function displayComments(commentsArray) {
         commentsListDiv.appendChild(commentContainer);
       } else if (viewMode === "list") {
         const commentListItem = document.createElement("li");
-        commentListItem.textContent = commentObj.comment;
-
+        commentListItem.textContent = commentObj.comment.replace(/\n/g, ' ');
         commentListView.appendChild(commentListItem);
       }
     }
@@ -155,7 +154,7 @@ function openEditModal(cmtid) {
     editedIndex = jsonArray.indexOf(commentObj);
     const editedCommentText = commentObj.comment;
     document.getElementById("editedComment").value =
-      cleanComment(editedCommentText, commentObj.template_tags);
+      cleanComment(editedCommentText, commentObj.template_tags).replace(/\n/g, ' ');
     new bootstrap.Modal(document.getElementById("editModal")).show();
   }
 }
