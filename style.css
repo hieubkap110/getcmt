@@ -60,8 +60,12 @@ body {
     margin-right: 5px;
   }
 
+  tr {
+    border-width: 0 !important
+  }
+
   th {
     background-color: #0050c7 !important;
     color: #ffffff;
-    border: none;
+    border: none !important;
   }
