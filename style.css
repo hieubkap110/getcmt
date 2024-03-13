@@ -59,3 +59,9 @@ body {
     font-size: 20px;
     margin-right: 5px;
   }
+
+  th {
+    background-color: #0050c7 !important;
+    color: #ffffff;
+    border: none;
+  }
